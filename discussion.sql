@@ -39,7 +39,7 @@ INSERT into linux_grades (course_name,student_id, grade_obtained) VALUES
 ('Linux Fundamentals', 15, 45);
 
 
-INSERT into linux_grades (course_name,student_id, grade_obtained) VALUES 
+INSERT into python_grades (course_name,student_id, grade_obtained) VALUES 
 ('Python Programming', 1, 91),
 ('Python Programming', 3, 83),
 ('Python Programming', 4, 88),
@@ -64,9 +64,18 @@ WHERE l.grade_obtained < 50
 
 -- Find students who took only one course (either Linux or Python, not both).
 
-SELECT s.student_name , s.intake_year , 'Linux only' AS Course_Taken , lg.grade_obtained AS grade
-FROM students s INNER JOIN linux_grades lg ON s.student_id = lg.student_id LEFT JOIN python_grades pg ON s.student_id= pg.student_id
-WHERE pg.student_id IS NULL
+SELECT student_id, student_name
+FROM students
+WHERE student_id IN (
+    SELECT student_id FROM linux_grades
+    WHERE student_id NOT IN (SELECT student_id FROM python_grades)
+    UNION
+    SELECT student_id FROM python_grades
+    WHERE student_id NOT IN (SELECT student_id FROM linux_grades)
+);
+
+
+
 
 --Find students who took both courses.
 
